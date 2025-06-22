@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🌟 Morsalin's About Me Chatbot 🌟</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      font-family: sans-serif;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid white;
+      margin-bottom: 15px;
+    }
+    #chat {
+      background: #1f1f38;
+      max-width: 800px;
+      width: 100%;
+      padding: 20px;
+      border-radius: 15px;
+    }
+    .question-btn {
+      background: #5a4fcf;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 15px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    #conversation {
+      background: #2a2a50;
+      padding: 20px;
+      height: 200px;
+      overflow-y: auto;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    #input-area {
+      display: flex;
+      gap: 10px;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    button.send-btn {
+      background: #764ba2;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <img src="morsalin.jpg" alt="Morsalin's Photo" />
+
+  <div id="chat">
+    <h2>🤖 Ask About Morsalin</h2>
+    <div class="question-list" id="questionList"></div>
+    <div id="conversation"></div>
+    <div id="input-area">
+      <input type="text" id="userInput" placeholder="Type something..." />
+      <button class="send-btn" onclick="sendToSheet()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const info = {
+      "what is your name?": "My name is Morsalin Hosain Dip.",
+      "where do you live?": "I live in Shahbazpur.",
+      "where do you study?": "I study at CUET.",
+      "what is your school name?": "Shahbazpur Bohumukhi High School.",
+      "what is your college name?": "Brahmanbaria United College.",
+      "do you have siblings?": "Yes, I have 2 brothers and 3 sisters.",
+      "what are your hobbies?": "I love programming, reading, and exploring creative ideas.",
+      "what is your coaching center name?": "Pinnacle Coaching Center.",
+      "do you have a girlfriend?": "No, I don’t give anyone attention. 😁",
+      "what is your mindset?": "I have a polite and respectful mindset with good values."
+    };
+
+    const questionList = document.getElementById("questionList");
+    const conversation = document.getElementById("conversation");
+
+    Object.keys(info).forEach(question => {
+      const btn = document.createElement("button");
+      btn.className = "question-btn";
+      btn.innerText = question;
+      btn.onclick = () => {
+        addMessage("You", question);
+        addMessage("Bot", info[question]);
+      };
+      questionList.appendChild(btn);
+    });
+
+    function addMessage(sender, text) {
+      const div = document.createElement("div");
+      div.innerText = `${sender}: ${text}`;
+      conversation.appendChild(div);
+      conversation.scrollTop = conversation.scrollHeight;
+    }
+
+    const SHEET_URL = "https://script.google.com/macros/s/YOUR_DEPLOYED_URL/exec";
+
+    function sendToSheet() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage("You", message);
+      input.value = "";
+
+      fetch(SHEET_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      });
+
+      addMessage("Bot", "✅ Your message has been saved to Morsalin's Google Sheet.");
+    }
+  </script>
+</body>
+</html>
